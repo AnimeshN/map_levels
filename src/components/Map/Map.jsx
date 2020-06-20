@@ -1,23 +1,39 @@
 import React, { Component } from "react";
 // import { select, geoMercator, geoPath } from "d3";
-import { geoMercator, geoPath } from "d3-geo";
+import { geoMercator, geoPath, geoCentroid } from "d3-geo";
 
 class Map extends Component {
   render() {
-    let data = JSON.parse(this.props.geojson);
+    let width = 500;
+    let height = 500;
+    let json = JSON.parse(this.props.geojson);
+    let center = geoCentroid(json);
+    let scale = 150;
+    let offset = [width / 2, height / 2];
+    let projection = geoMercator()
+      .scale(scale)
+      .translate(offset)
+      .center(center);
 
-    // const projection = geoMercator();
+    let pathGenerator = geoPath().projection(projection);
+    //determining better values of scale and offset
+    let bounds = pathGenerator.bounds(json);
+    let hscale = (scale * width) / (bounds[1][0] - bounds[0][0]);
+    let vscale = (scale * height) / (bounds[1][1] - bounds[0][1]);
+    scale = hscale < vscale ? hscale : vscale;
+    offset = [
+      width - (bounds[0][0] + bounds[1][0]) / 2,
+      height - (bounds[0][1] + bounds[1][1]) / 2,
+    ];
 
-    const projection = geoMercator()
-      .scale(30000)
-      .translate([500, 500])
-      .center([73, 19.7]);
+    // new projection
+    projection = geoMercator().scale(scale).translate(offset).center(center);
+    pathGenerator = geoPath().projection(projection);
 
-    const pathGenerator = geoPath().projection(projection);
     let countries = "";
-    if (data) {
-      console.log(data.features);
-      countries = data.features.map((d, i) => (
+    if (json) {
+      console.log(json.features);
+      countries = json.features.map((d, i) => (
         <path key={"path" + i} d={pathGenerator(d)} className="countries" />
       ));
     }
