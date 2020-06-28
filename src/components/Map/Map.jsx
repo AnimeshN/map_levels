@@ -11,8 +11,8 @@ class Map extends Component {
   render() {
     // new projection
     let polygon = "";
-    let { data, scale, offset, center } = this.props;
-    if (data) {
+    let { geometry, scale, offset, center } = this.props;
+    if (geometry) {
       let projection = geoMercator()
         .scale(scale)
         .translate(offset)
@@ -20,8 +20,7 @@ class Map extends Component {
 
       let pathGenerator = geoPath().projection(projection);
 
-      console.log(data.features);
-      polygon = data.features.map((d, i) => (
+      polygon = geometry.features.map((d, i) => (
         <path key={"path" + i} d={pathGenerator(d)} className="polygon" />
       ));
     }

@@ -15,8 +15,7 @@ class Form extends Component {
     const selectedfile = event.target.files[0];
     const reader = new FileReader();
     reader.onload = () => {
-      // this.props.getSelectedGeojson(JSON.parse(reader.result));
-      console.log(csvJSON(reader.result));
+      this.props.getdata(csvJSON(reader.result));
     };
     reader.readAsText(selectedfile);
   };
@@ -26,6 +25,13 @@ class Form extends Component {
       <React.Fragment>
         <input type="file" name="file" onChange={this.onChangeHandlerGeom} />
         <input type="file" name="file" onChange={this.onChangeHandlerData} />
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={this.props.onClickViz}
+        >
+          Vizualize
+        </button>
       </React.Fragment>
     );
   }
