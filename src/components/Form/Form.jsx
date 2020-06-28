@@ -1,11 +1,22 @@
 import React, { Component } from "react";
+import csvJSON from "../../utils/csvJSON";
 
 class Form extends Component {
-  onChangeHandler = (event) => {
+  onChangeHandlerGeom = (event) => {
     const selectedfile = event.target.files[0];
     const reader = new FileReader();
     reader.onload = () => {
-      this.props.getSelectedGeojson(reader.result);
+      this.props.getSelectedGeojson(JSON.parse(reader.result));
+    };
+    reader.readAsText(selectedfile);
+  };
+
+  onChangeHandlerData = (event) => {
+    const selectedfile = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      // this.props.getSelectedGeojson(JSON.parse(reader.result));
+      console.log(csvJSON(reader.result));
     };
     reader.readAsText(selectedfile);
   };
@@ -13,7 +24,8 @@ class Form extends Component {
   render() {
     return (
       <React.Fragment>
-        <input type="file" name="file" onChange={this.onChangeHandler} />
+        <input type="file" name="file" onChange={this.onChangeHandlerGeom} />
+        <input type="file" name="file" onChange={this.onChangeHandlerData} />
       </React.Fragment>
     );
   }
